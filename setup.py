@@ -6,7 +6,7 @@ Pgfulltext module of django orm extensions package (collection of third party pl
 
 setup(
     name = "djorm-ext-pgfulltext",
-    version = ':versiontools:djorm_pgfulltext:',
+    version = '0.4.0',
     url = 'https://github.com/niwibe/djorm-ext-pgfulltext',
     license = 'BSD',
     platforms = ['OS Independent'],
@@ -18,9 +18,6 @@ setup(
     packages = find_packages(),
     include_package_data = False,
     install_requires = [],
-    setup_requires = [
-        'versiontools >= 1.9',
-    ],
     zip_safe = False,
     classifiers = [
         'Development Status :: 4 - Beta',
