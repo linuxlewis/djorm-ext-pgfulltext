@@ -52,3 +52,20 @@ class Person3(models.Model):
 
     def __unicode__(self):
         return self.name
+
+
+class Book(models.Model):
+    author = models.ForeignKey(Person)
+    #editor = models.ForeignKey(Person, null=True)
+    name = models.CharField(max_length=32)
+    search_index = VectorField()
+
+    objects = SearchManager(
+        fields=('name',),
+        search_field = 'search_index',
+        auto_update_search_field = True,
+        config = 'names'
+    )
+
+    def __unicode__(self):
+        return self.name

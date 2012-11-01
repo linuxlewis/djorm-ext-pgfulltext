@@ -4,7 +4,7 @@ from django.utils.unittest import TestCase
 from django.utils import unittest
 from django.db import connection, transaction
 
-from .models import Person, Person2, Person3
+from .models import Person, Person2, Person3, Book
 
 class TestFts(TestCase):
     def setUp(self):
@@ -111,3 +111,10 @@ class TestFts(TestCase):
 
         qs = Person3.objects.search(query="Andrei2")
         self.assertEqual(qs.count(), 0)
+
+    def test_ranking_with_join(self):
+        book = Book.objects.create(name='Learning Python', author=self.p1)
+
+        qs = Book.objects.search(query='Learning Python', rank_field='rank').select_related('author')
+
+        self.assertEqual(qs[0].author, self.p1)
