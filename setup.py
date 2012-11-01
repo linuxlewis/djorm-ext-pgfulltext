@@ -1,12 +1,12 @@
 from setuptools import setup, find_packages
 
 description="""
-Pgfulltext module of django orm extensions package (collection of third party plugins build in one unified package).
+PostgreSQL Full Text Search integration with django orm.
 """
 
 setup(
     name = "djorm-ext-pgfulltext",
-    version = '0.4.0',
+    version = '0.4.1',
     url = 'https://github.com/niwibe/djorm-ext-pgfulltext',
     license = 'BSD',
     platforms = ['OS Independent'],
