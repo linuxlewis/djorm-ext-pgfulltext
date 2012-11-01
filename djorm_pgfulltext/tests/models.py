@@ -56,7 +56,6 @@ class Person3(models.Model):
 
 class Book(models.Model):
     author = models.ForeignKey(Person)
-    #editor = models.ForeignKey(Person, null=True)
     name = models.CharField(max_length=32)
     search_index = VectorField()
 
