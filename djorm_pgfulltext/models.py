@@ -113,6 +113,11 @@ class SearchManagerMixIn(object):
                 force_unicode(query).replace("'","''")
             )
 
+            full_search_field = "%s.%s" % (
+                qn(self.model._meta.db_table),
+                qn(self.search_field)
+            )
+
             # if fields is passed, obtain a vector expression with
             # these fields. In other case, intent use of search_field if
             # exists.
@@ -122,10 +127,7 @@ class SearchManagerMixIn(object):
                 if not self.search_field:
                     raise ValueError("search_field is not specified")
 
-                search_vector = "%s.%s" % (
-                    qn(self.model._meta.db_table),
-                    qn(self.search_field)
-                )
+                search_vector = full_search_field
 
             where = " (%s) @@ (%s)" % (search_vector, ts_query)
             select_dict, order = {}, []
@@ -133,7 +135,7 @@ class SearchManagerMixIn(object):
             if rank_field:
                 select_dict[rank_field] = '%s(%s, %s, %d)' % (
                     rank_function,
-                    qn(self.search_field),
+                    full_search_field,
                     ts_query,
                     rank_normalization
                 )
