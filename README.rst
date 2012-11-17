@@ -54,7 +54,7 @@ Usage examples:
 ^^^^^^^^^^^^^^^
 
 - The config parameter is optional and defaults to 'pg_catalog.english'.
-- The fields parameter is optional. If a list of tuples, you can specify the ranking of each field, if it is None, it gets 'A' as the default.
+- The fields parameter is optional. If a list of tuples, you can specify the ranking of each field, if it is None, it gets 'D' as the default.
 - It can also be a simple list of fields, and the ranking will be selected by default. If the field is empty, the index was applied to all fields ``CharField`` and ``TextField``.
 
 To search, use the ``search`` method of the manager. The current implementation, by default uses unaccent extension for ignore the accents. Also, the searches are case insensitive.
