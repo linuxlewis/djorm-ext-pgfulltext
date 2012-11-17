@@ -6,7 +6,7 @@ PostgreSQL Full Text Search integration with django orm.
 
 setup(
     name = "djorm-ext-pgfulltext",
-    version = '0.4.2',
+    version = '0.5',
     url = 'https://github.com/niwibe/djorm-ext-pgfulltext',
     license = 'BSD',
     platforms = ['OS Independent'],
@@ -20,12 +20,19 @@ setup(
     install_requires = [],
     zip_safe = False,
     classifiers = [
-        'Development Status :: 4 - Beta',
-        'Framework :: Django',
-        'Intended Audience :: Developers',
-        'License :: OSI Approved :: BSD License',
-        'Operating System :: OS Independent',
-        'Programming Language :: Python',
-        'Topic :: Internet :: WWW/HTTP',
+        "Development Status :: 5 - Production/Stable",
+        "Operating System :: OS Independent",
+        "Environment :: Web Environment",
+        "Framework :: Django",
+        "License :: OSI Approved :: BSD License",
+        "Intended Audience :: Developers",
+        "Programming Language :: Python",
+        "Programming Language :: Python :: 2",
+        "Programming Language :: Python :: 2.7",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.2",
+        "Programming Language :: Python :: 3.3",
+        "Topic :: Software Development :: Libraries",
+        "Topic :: Utilities",
     ]
 )

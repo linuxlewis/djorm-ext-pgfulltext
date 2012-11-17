@@ -2,7 +2,12 @@
 
 from itertools import repeat
 
-from django.utils.encoding import force_unicode
+# Python3 compatibility
+try:
+    from django.utils.encoding import force_text as force_text
+except ImportError:
+    from django.utils.encoding import force_text
+
 from django.db import models, connections, transaction
 
 def auto_update_search_field_handler(sender, instance, *args, **kwargs):
@@ -110,7 +115,7 @@ class SearchManagerMixIn(object):
             ts_query = "%s('%s', '%s')" % (
                 function,
                 config,
-                force_unicode(query).replace("'","''")
+                force_text(query).replace("'","''")
             )
 
             full_search_field = "%s.%s" % (
