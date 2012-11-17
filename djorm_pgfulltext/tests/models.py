@@ -29,7 +29,7 @@ class Person2(models.Model):
     search_index = VectorField()
 
     objects = SearchManager(
-        fields=('name', 'description'),
+        fields=(('name', 'A'), ('description', 'B')),
         search_field = 'search_index',
         config = 'names',
     )

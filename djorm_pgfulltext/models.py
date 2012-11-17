@@ -225,8 +225,8 @@ class SearchManagerMixIn(object):
                 parsed_fields.update([(x, None) for x in fields])
 
             # Does not support field.attname.
-            field_names = set((field.name, None) for field in self.model._meta.fields if not field.primary_key)
-            non_model_fields = parsed_fields.difference(field_names)
+            field_names = set(field.name for field in self.model._meta.fields if not field.primary_key)
+            non_model_fields = set(x[0] for x in parsed_fields).difference(field_names)
             if non_model_fields:
                 raise ValueError("The following fields do not exist in this"
                                  " model: {0}".format(", ".join(x[0] for x in non_model_fields)))

@@ -1,7 +1,7 @@
 -- Create a new text search configuration to search in person names
 -- This needs no stemming or thesaurus, only unaccent and lowercasing.
 
-create extension unaccent;
+-- create extension unaccent;
 
 create text search configuration public.names (parser='default');
 
