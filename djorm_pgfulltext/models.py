@@ -71,8 +71,9 @@ class SearchManagerMixIn(object):
 
         # Add 'update_search_field' instance method, that calls manager's update_search_field.
         if not getattr(cls, 'update_search_field', None):
-            _update_search_field = lambda x: x._fts_manager.update_search_field(pk=x.pk)
-            setattr(cls, 'update_search_field', _update_search_field)
+            def update_search_field(self, *args, **kwargs):
+                self._fts_manager.update_search_field(*args, **kwargs)
+            setattr(cls, 'update_search_field', update_search_field)
 
         if self.auto_update_search_field:
             models.signals.post_save.connect(auto_update_search_field_handler, sender=cls)

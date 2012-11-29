@@ -25,7 +25,7 @@ class TestFts(TestCase):
             name=u'Pepa',
             description=u"Is a housewife",
         )
-        obj.update_search_field()
+        obj.update_search_field(using='default')
 
         qs = Person2.objects.search(query="Pepa")
         self.assertEqual(qs.count(), 1)
