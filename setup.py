@@ -6,7 +6,7 @@ PostgreSQL Full Text Search integration with django orm.
 
 setup(
     name = "djorm-ext-pgfulltext",
-    version = '0.7',
+    version = '0.8',
     url = 'https://github.com/niwibe/djorm-ext-pgfulltext',
     license = 'BSD',
     platforms = ['OS Independent'],

@@ -71,8 +71,8 @@ class SearchManagerMixIn(object):
 
         # Add 'update_search_field' instance method, that calls manager's update_search_field.
         if not getattr(cls, 'update_search_field', None):
-            def update_search_field(self, *args, **kwargs):
-                self._fts_manager.update_search_field(*args, **kwargs)
+            def update_search_field(self, using=None, config=None):
+                self._fts_manager.update_search_field(pk=self.pk, using=using, config=config)
             setattr(cls, 'update_search_field', update_search_field)
 
         if self.auto_update_search_field:
