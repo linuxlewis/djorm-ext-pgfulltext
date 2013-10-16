@@ -235,7 +235,7 @@ class SearchManagerMixIn(object):
             non_model_fields = set(x[0] for x in parsed_fields).difference(field_names)
             if non_model_fields:
                 raise ValueError("The following fields do not exist in this"
-                                 " model: {0}".format(", ".join(x[0] for x in non_model_fields)))
+                                 " model: {0}".format(", ".join(x for x in non_model_fields)))
         else:
             parsed_fields.update(self._find_text_fields())
 
