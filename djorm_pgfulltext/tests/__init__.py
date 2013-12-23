@@ -89,28 +89,19 @@ class TestFts(TestCase):
         self.assertEqual(qs.count(), 1)
 
     def test_transaction_test(self):
-        class TestException(Exception):
-            pass
+        if not hasattr(transaction, "atomic"):
+            return
 
-        p = Person3(
-            name='Andrei1',
-            description='description1',
-        )
-        p.save()
+        with transaction.atomic():
+            obj = Person2.objects.create(
+                name=u'Pepa',
+                description=u"Is a housewife",
+            )
 
-        try:
-            with transaction.commit_on_success():
-                p.name = 'Andrei2'
-                p.save()
+            obj.update_search_field(using='default')
 
-                qs = Person3.objects.search(query="Andrei2")
-                self.assertEqual(qs.count(), 1)
-                raise TestException()
-        except TestException:
-            pass
-
-        qs = Person3.objects.search(query="Andrei2")
-        self.assertEqual(qs.count(), 0)
+        qs = Person2.objects.search(query="Pepa")
+        self.assertEqual(qs.count(), 2)
 
     def test_ranking_with_join(self):
         book = Book.objects.create(name='Learning Python', author=self.p1)

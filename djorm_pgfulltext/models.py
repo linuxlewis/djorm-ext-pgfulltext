@@ -1,14 +1,46 @@
 # -*- coding: utf-8 -*-
 
 from itertools import repeat
+from django.db import models, connections
 
-# Python3 compatibility
+# Compatibility import and fixes section.
+
 try:
     from django.utils.encoding import force_unicode as force_text
 except ImportError:
     from django.utils.encoding import force_text
 
-from django.db import models, connections, transaction
+try:
+    from django.db.transaction import atomic
+except ImportError:
+    # This encapsulates pre django 1.6 transaction
+    # behavior under same abstraction as django 1.6 atomic
+    # decorator. This not indents tu emulate django 1.6 atomic
+    # behavior, only has partially same interface for easy
+    # use.
+    from django.db import transaction
+
+    class atomic(object):
+        def __init__(self, using=None):
+            self.using = using
+
+        def __enter__(self):
+            if not transaction.is_managed(using=self.using):
+                transaction.enter_transaction_management(using=self.using)
+                self.forced_managed = True
+            else:
+                self.forced_managed = False
+
+        def __exit__(self, *args, **kwargs):
+            try:
+                if self.forced_managed:
+                    transaction.commit(using=self.using)
+                else:
+                    transaction.commit_unless_managed(using=self.using)
+            finally:
+                if self.forced_managed:
+                    transaction.leave_transaction_management(using=self.using)
+
 
 def auto_update_search_field_handler(sender, instance, *args, **kwargs):
     instance.update_search_field()
@@ -192,23 +224,9 @@ class SearchManagerMixIn(object):
             where_sql
         )
 
-        if not transaction.is_managed(using=using):
-            transaction.enter_transaction_management(using=using)
-            forced_managed = True
-        else:
-            forced_managed = False
-
-        cursor = connection.cursor()
-        cursor.execute(sql, params)
-
-        try:
-            if forced_managed:
-                transaction.commit(using=using)
-            else:
-                transaction.commit_unless_managed(using=using)
-        finally:
-            if forced_managed:
-                transaction.leave_transaction_management(using=using)
+        with atomic():
+            cursor = connection.cursor()
+            cursor.execute(sql, params)
 
     def _find_text_fields(self):
         fields = [f for f in self.model._meta.fields

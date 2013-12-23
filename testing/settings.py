@@ -27,3 +27,5 @@ INSTALLED_APPS = (
     'djorm_pgfulltext',
     'djorm_pgfulltext.tests',
 )
+
+TEST_RUNNER = 'django.test.simple.DjangoTestSuiteRunner'
