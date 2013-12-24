@@ -50,7 +50,7 @@ To use it, you will need to add a new field. Obviously, this is not mandatory, a
 
 
 The manager automatically injected ``update_search_field`` method to the model instance.
-Also, not to override the save method, you can pass the parameter ``auto_update_search_field = True``, so 
+Also, not to override the save method, you can pass the parameter ``auto_update_search_field = True``, so
 the index field  is updated automatically by calling the ``save`` method.
 
 
@@ -70,7 +70,7 @@ To search, use the ``search`` method of the manager. The current implementation,
     >>> Page.objects.search("about | documentation | django | home", raw=True)
     [<Page: Page: Home page>, <Page: Page: About>, <Page: Page: Navigation>]
 
-FTS extension by default uses plainto_tsquery instead of to_tosquery, for this reason the use of raw parameter. 
+FTS extension by default uses plainto_tsquery instead of to_tosquery, for this reason the use of raw parameter.
 
 
 General notes:
@@ -84,3 +84,11 @@ You must ensure you have installed the extension `unaccent`:
     ALTER FUNCTION unaccent(text) IMMUTABLE;
 
 You can install this extension on template1 database for make this extension automatically available for all new created databases.
+
+
+Changelog
+---------
+
+**0.9**
+
+- Fix django 1.6 compatibility (transaction management).
