@@ -15,7 +15,7 @@ try:
 except ImportError:
     # This encapsulates pre django 1.6 transaction
     # behavior under same abstraction as django 1.6 atomic
-    # decorator. This not indents tu emulate django 1.6 atomic
+    # decorator. This not intends to emulate django 1.6 atomic
     # behavior, only has partially same interface for easy
     # use.
     from django.db import transaction
