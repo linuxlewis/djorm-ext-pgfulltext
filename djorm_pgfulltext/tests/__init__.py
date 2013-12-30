@@ -109,3 +109,10 @@ class TestFts(TestCase):
         qs = Book.objects.search(query='Learning Python', rank_field='rank').select_related('author')
 
         self.assertEqual(qs[0].author, self.p1)
+
+    def test_headline(self):
+        book = Book.objects.create(name='Learning Python', author=self.p1)
+
+        qs = Book.objects.search(query='Python', headline_field='headline', headline_document='name')
+
+        self.assertEqual(qs[0].headline, 'Learning <b>Python</b>')

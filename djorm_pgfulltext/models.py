@@ -114,7 +114,8 @@ class SearchManagerMixIn(object):
 
 
     def search(self, query, rank_field=None, rank_function='ts_rank', config=None,
-                rank_normalization=32, raw=False, using=None, fields=None):
+                rank_normalization=32, raw=False, using=None, fields=None,
+                headline_field=None, headline_document=None):
         '''
         Convert query with to_tsquery or plainto_tsquery, depending on raw is
         `True` or `False`, and return a QuerySet with the filter.
@@ -130,6 +131,13 @@ class SearchManagerMixIn(object):
 
         If `fields` is not `None`, the filter is made  with this fields istead of
         defined on a constructor of manager.
+
+        If `headline_field` and `headline_document` is not `None`,
+        a field with this `headline_field` name will be added containing the 
+        headline of the instances, which will be searched inside `headline_document`.
+        Search headlines are explained here:
+
+        http://www.postgresql.org/docs/9.1/static/textsearch-controls.html#TEXTSEARCH-HEADLINE
         '''
 
         if not config:
@@ -179,8 +187,15 @@ class SearchManagerMixIn(object):
                 )
                 order = ['-%s' % (rank_field,)]
 
-            qs = qs.extra(select=select_dict, where=[where], order_by=order)
+            if headline_field is not None and headline_document is not None:
+                select_dict[headline_field] = "ts_headline('%s', %s, %s)" % (
+                    config,
+                    headline_document,
+                    ts_query
+                )
 
+            qs = qs.extra(select=select_dict, where=[where], order_by=order)
+        
         return qs
 
     def update_search_field(self, pk=None, config=None, using=None):
