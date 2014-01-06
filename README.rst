@@ -92,3 +92,9 @@ Changelog
 **0.9**
 
 - Fix django 1.6 compatibility (transaction management).
+
+
+.. image:: https://d2weczhvl823v0.cloudfront.net/djangonauts/djorm-ext-pgfulltext/trend.png
+   :alt: Bitdeli badge
+   :target: https://bitdeli.com/free
+
