@@ -302,7 +302,7 @@ class SearchQuerySet(QuerySet):
             if rank_field:
                 select_dict[rank_field] = '%s(%s, %s, %d)' % (
                     rank_function,
-                    full_search_field,
+                    search_vector,
                     ts_query,
                     rank_normalization
                 )
