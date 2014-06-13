@@ -3,6 +3,7 @@
 from itertools import repeat
 from django.db import models, connections
 from django.db.models.query import QuerySet
+from django.contrib.gis.db.models import GeoManager
 
 # Compatibility import and fixes section.
 
@@ -321,4 +322,8 @@ class SearchQuerySet(QuerySet):
 
 
 class SearchManager(SearchManagerMixIn, models.Manager):
+    pass
+
+
+class GisSearchManager(SearchManagerMixIn, GeoManager):
     pass
