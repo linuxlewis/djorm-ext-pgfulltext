@@ -5,3 +5,4 @@ dist
 versiontools*
 build*
 *.egg*
+.idea
