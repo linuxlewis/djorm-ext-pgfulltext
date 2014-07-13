@@ -72,10 +72,10 @@ if django.VERSION[:2] >= (1,7):
                 ts_name = ts.name
                 cmd = '%s @@ to_tsquery(%%s::regconfig, %%s)' % lhs
 
-                rest = (ts_name, u" & ".join(self.transform.__call__(rhs_params)))
+                rest = (ts_name, " & ".join(self.transform.__call__(rhs_params)))
             else:
                 cmd = '%s @@ to_tsquery(%%s)' % lhs
-                rest = (u" & ".join(self.transform.__call__(rhs_params)),)
+                rest = (" & ".join(self.transform.__call__(rhs_params)),)
 
             return cmd, rest
 
