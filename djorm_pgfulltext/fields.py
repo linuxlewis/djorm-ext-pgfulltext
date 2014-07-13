@@ -41,21 +41,21 @@ if django.VERSION[:2] >= (1,7):
 
     from django.db.models import Lookup
 
+    def quotes(wordlist):
+        return [u"%s" % adapt(x.replace("\\", "")) for x in wordlist]
+
+    def startswith(wordlist):
+        return [x + u":*" for x in quotes(wordlist)]
+
+    def negative(wordlist):
+        return [u'!' + x for x in startswith(wordlist)]
+
+
     class TSConfig(object):
         def __init__(self, name):
             self.name = name
 
     class FullTextLookupBase(Lookup):
-        def quotes(self, wordlist):
-            return [u"%s" % adapt(x.replace("\\", "")) for x in wordlist]
-
-        transform = 'quotes'
-
-        def startswith(self, wordlist):
-            return [x + u":*" for x in self.quotes(wordlist)]
-
-        def negative(self, wordlist):
-            return [u'!' + x for x in self.startswith(wordlist)]
 
         def as_sql(self, qn, connection):
             lhs, lhs_params = qn.compile(self.lhs)
@@ -64,17 +64,15 @@ if django.VERSION[:2] >= (1,7):
             if type(rhs_params) in [str, unicode]:
                 rhs_params = [rhs_params]
 
-            transform = getattr(self, self.transform)
-
             if type(rhs_params[0]) == TSConfig:
                 ts = rhs_params.pop(0)
                 ts_name = ts.name
                 cmd = '%s @@ to_tsquery(%%s::regconfig, %%s)' % lhs
 
-                rest = (ts_name, u" & ".join(transform(rhs_params)))
+                rest = (ts_name, u" & ".join(self.transform.__call__(rhs_params)))
             else:
                 cmd = '%s @@ to_tsquery(%%s)' % lhs
-                rest = (u" & ".join(transform(rhs_params)),)
+                rest = (u" & ".join(self.transform.__call__(rhs_params)),)
 
             return cmd, rest
 
@@ -110,6 +108,10 @@ if django.VERSION[:2] >= (1,7):
         """
         lookup_name = 'ft'
 
+        def transform(self, *args):
+            return quotes(*args)
+
+
     class FullTextLookupStartsWith(FullTextLookupBase):
         """This lookup scans for full text index entries that BEGIN with
         a given phrase, like:
@@ -121,7 +123,9 @@ if django.VERSION[:2] >= (1,7):
             ts_query('Foobar:* & Baz:* & Quux:*')
         """
         lookup_name = 'ft_startswith'
-        transform = 'startswith'
+
+        def transform(self, *args):
+            return startswith(*args)
 
     class FulTextLookupNotStartsWith(FullTextLookupBase):
         """This lookup scans for full text index entries that do not begin with
@@ -134,7 +138,9 @@ if django.VERSION[:2] >= (1,7):
             ts_query('!Foobar:* & !Baz:* & !Quux:*')
         """
         lookup_name = 'ft_not_startswith'
-        transform = 'negative'
+
+        def transform(self, *args):
+            return negative(*args)
 
     VectorField.register_lookup(FullTextLookup)
     VectorField.register_lookup(FullTextLookupStartsWith)
