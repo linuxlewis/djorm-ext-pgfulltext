@@ -2,6 +2,7 @@
 
 import django
 from django.db import models
+from psycopg2.extensions import adapt
 
 class VectorField(models.Field):
     def __init__(self, *args, **kwargs):
@@ -40,13 +41,14 @@ if django.VERSION[:2] >= (1,7):
 
     from django.db.models import Lookup
 
-    class TextSearchDictionary(object):
+    class TSConfig(object):
         def __init__(self, name):
             self.name = name
 
     class FullTextLookupBase(Lookup):
         def quotes(self, wordlist):
-            return [u"'%s'" % x for x in wordlist]
+            return [u"%s" % adapt(x.replace("\\", "")) for x in wordlist]
+
         transform = 'quotes'
 
         def startswith(self, wordlist):
@@ -59,25 +61,20 @@ if django.VERSION[:2] >= (1,7):
             lhs, lhs_params = qn.compile(self.lhs)
             rhs, rhs_params = self.process_rhs(qn, connection)
 
-            print "X" * 90
-            print rhs_params
-
             if type(rhs_params) in [str, unicode]:
                 rhs_params = [rhs_params]
 
             transform = getattr(self, self.transform)
 
-            if type(rhs_params[0]) == TextSearchDictionary:
+            if type(rhs_params[0]) == TSConfig:
                 ts = rhs_params.pop(0)
                 ts_name = ts.name
-                cmd = '%s @@ to_tsquery(%%s, %%s)' % lhs
+                cmd = '%s @@ to_tsquery(%%s::regconfig, %%s)' % lhs
 
                 rest = (ts_name, u" & ".join(transform(rhs_params)))
             else:
                 cmd = '%s @@ to_tsquery(%%s)' % lhs
                 rest = (u" & ".join(transform(rhs_params)),)
-
-            print cmd, rest
 
             return cmd, rest
 
@@ -123,7 +120,7 @@ if django.VERSION[:2] >= (1,7):
 
             ts_query('Foobar:* & Baz:* & Quux:*')
         """
-        lookup_name = 'fts'
+        lookup_name = 'ft_startswith'
         transform = 'startswith'
 
     class FulTextLookupNotStartsWith(FullTextLookupBase):
@@ -136,7 +133,7 @@ if django.VERSION[:2] >= (1,7):
 
             ts_query('!Foobar:* & !Baz:* & !Quux:*')
         """
-        lookup_name = 'ftns'
+        lookup_name = 'ft_not_startswith'
         transform = 'negative'
 
     VectorField.register_lookup(FullTextLookup)
