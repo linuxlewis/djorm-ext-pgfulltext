@@ -135,9 +135,15 @@ class TestFullTextLookups(FtsSetUpMixin, TestCase):
             self.p1.pk,
             Person.objects.filter(search_index__ft_startswith='programmer')[0].pk)
 
-    def test_sql_injection(self):
-        list(Person.objects.filter(search_index__ft_startswith="\\'test"))
-        list(Person.objects.filter(search_index__ft_startswith="'test"))
+    def test_user_input(self):
+        for test_str in [u"łódź",
+                         "())(#*&|||)()( )( ) )( )(|| | | |&",
+                         "test test", "test !test", "test & test",
+                         "test | test", "test (test)", "test(",
+                         "test       &&&& test", "\\'test"]:
+            list(Person.objects.filter(search_index__ft_startswith=test_str))
+
+
 
     def test_alternative_config(self):
         from djorm_pgfulltext.fields import TSConfig

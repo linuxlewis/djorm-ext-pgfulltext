@@ -42,16 +42,13 @@ if django.VERSION[:2] >= (1,7):
     from django.db.models import Lookup
 
     def quotes(wordlist):
-        for x in wordlist:
-            assert(type(x), unicode), 'pass only unicode strings here'
-
-        return [u"%s" % adapt(x.replace("\\", "").encode('utf-8')) for x in wordlist]
+        return ["%s" % adapt(x.replace("\\", "").encode('utf-8')) for x in wordlist]
 
     def startswith(wordlist):
-        return [x + u":*" for x in quotes(wordlist)]
+        return [x + ":*" for x in quotes(wordlist)]
 
     def negative(wordlist):
-        return [u'!' + x for x in startswith(wordlist)]
+        return ['!' + x for x in startswith(wordlist)]
 
 
     class TSConfig(object):
