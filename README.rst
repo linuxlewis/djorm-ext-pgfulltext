@@ -89,6 +89,10 @@ You can install this extension on template1 database for make this extension aut
 Changelog
 ---------
 
+**0.9.2**
+
+- Django 1.7 lookups support.
+
 **0.9**
 
 - Fix django 1.6 compatibility (transaction management).
