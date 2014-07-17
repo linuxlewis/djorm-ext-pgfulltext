@@ -6,3 +6,5 @@ versiontools*
 build*
 *.egg*
 .idea
+testing/venv/
+testing/venv16/
