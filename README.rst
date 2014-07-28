@@ -73,6 +73,16 @@ To search, use the ``search`` method of the manager. The current implementation,
 FTS extension by default uses plainto_tsquery instead of to_tosquery, for this reason the use of raw parameter.
 
 
+Update search field:
+^^^^^^^^^^^^^^^^^^^^
+
+For manual updating all search fields use management command ``update_search_field``:
+
+.. code-block:: python
+
+    ./manage.py update_search_field [options] appname [model]
+
+
 General notes:
 ^^^^^^^^^^^^^^
 
