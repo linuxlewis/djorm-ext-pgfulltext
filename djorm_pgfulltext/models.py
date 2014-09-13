@@ -113,11 +113,11 @@ class SearchManagerMixIn(object):
 
         super(SearchManagerMixIn, self).contribute_to_class(cls, name)
 
-    def get_query_set(self):
+    def get_queryset(self):
         return SearchQuerySet(model=self.model, using=self._db)
 
     def search(self, *args, **kwargs):
-        return self.get_query_set().search(*args, **kwargs)
+        return self.get_queryset().search(*args, **kwargs)
 
     def update_search_field(self, pk=None, config=None, using=None):
         '''
