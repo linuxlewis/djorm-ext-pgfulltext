@@ -1,6 +1,7 @@
 """
 Update search fields.
 """
+from __future__ import print_function
 from django.core.management.base import BaseCommand, CommandError
 from django.core.exceptions import ImproperlyConfigured
 from django.db import models
@@ -44,6 +45,6 @@ class Command(BaseCommand):
         # processing
 
         for m in app_models_for_process:
-            print "Processing model %s..." % m,
+            print("Processing model %s..." % m, end='')
             m._fts_manager.update_search_field()
-            print "Done"
+            print("Done")
