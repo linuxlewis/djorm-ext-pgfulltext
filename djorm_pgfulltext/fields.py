@@ -1,5 +1,11 @@
 # -*- coding: utf-8 -*-
 
+# Python3 string compadability
+try:
+  basestring
+except NameError:
+  basestring = str
+
 import django
 from django.db import models
 from psycopg2.extensions import adapt
@@ -61,7 +67,7 @@ if django.VERSION[:2] >= (1,7):
             lhs, lhs_params = qn.compile(self.lhs)
             rhs, rhs_params = self.process_rhs(qn, connection)
 
-            if type(rhs_params) in [str, unicode]:
+            if isinstance(rhs_params, basestring):
                 rhs_params = [rhs_params]
 
             if type(rhs_params[0]) == TSConfig:
