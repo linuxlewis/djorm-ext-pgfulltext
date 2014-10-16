@@ -48,7 +48,7 @@ if django.VERSION[:2] >= (1,7):
     from django.db.models import Lookup
 
     def quotes(wordlist):
-        return ["%s" % adapt(x.replace("\\", "").encode('utf-8')) for x in wordlist]
+        return ["%s" % adapt(x.replace("\\", "")) for x in wordlist]
 
     def startswith(wordlist):
         return [x + ":*" for x in quotes(wordlist)]
