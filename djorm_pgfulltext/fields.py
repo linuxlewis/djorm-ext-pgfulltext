@@ -11,10 +11,19 @@ from django.db import models
 from psycopg2.extensions import adapt
 
 class VectorField(models.Field):
-    def __init__(self, db_index=True, default='', editable=False, null=True, serialize=False, *args, **kwargs):
-        super(VectorField, self).__init__(
-            db_index=db_index, default=default, editable=editable, null=null, serialize=serialize, *args, **kwargs
-        )
+
+    def __init__(self, *args, **kwargs):
+        kwargs['default'] = ''
+        kwargs['editable'] = False
+        kwargs['serialize'] = False
+        super(VectorField, self).__init__(*args, **kwargs)
+
+    def deconstruct(self):
+        name, path, args, kwargs = super(VectorField, self).deconstruct()
+        del kwargs['default']
+        del kwargs['editable']
+        del kwargs['serialize']
+        return name, path, args, kwargs
 
     def db_type(self, *args, **kwargs):
         return 'tsvector'
