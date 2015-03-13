@@ -1,17 +1,29 @@
 # -*- coding: utf-8 -*-
 
+# Python3 string compadability
+try:
+  basestring
+except NameError:
+  basestring = str
+
 import django
 from django.db import models
 from psycopg2.extensions import adapt
 
 class VectorField(models.Field):
+
     def __init__(self, *args, **kwargs):
-        kwargs['null'] = True
         kwargs['default'] = ''
         kwargs['editable'] = False
         kwargs['serialize'] = False
-        kwargs['db_index'] = True
         super(VectorField, self).__init__(*args, **kwargs)
+
+    def deconstruct(self):
+        name, path, args, kwargs = super(VectorField, self).deconstruct()
+        del kwargs['default']
+        del kwargs['editable']
+        del kwargs['serialize']
+        return name, path, args, kwargs
 
     def db_type(self, *args, **kwargs):
         return 'tsvector'
@@ -42,7 +54,7 @@ if django.VERSION[:2] >= (1,7):
     from django.db.models import Lookup
 
     def quotes(wordlist):
-        return ["%s" % adapt(x.replace("\\", "").encode('utf-8')) for x in wordlist]
+        return ["%s" % adapt(x.replace("\\", "")) for x in wordlist]
 
     def startswith(wordlist):
         return [x + ":*" for x in quotes(wordlist)]
@@ -61,7 +73,7 @@ if django.VERSION[:2] >= (1,7):
             lhs, lhs_params = qn.compile(self.lhs)
             rhs, rhs_params = self.process_rhs(qn, connection)
 
-            if type(rhs_params) in [str, unicode]:
+            if isinstance(rhs_params, basestring):
                 rhs_params = [rhs_params]
 
             if type(rhs_params[0]) == TSConfig:
