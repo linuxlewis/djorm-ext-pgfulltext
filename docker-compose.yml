@@ -1,0 +1,16 @@
+postgresql:
+  image: postgres
+  ports:
+    - "5432:5432"
+
+djorm:
+  build: .
+  environment:
+    - POSTGRES_HOST=192.168.59.103
+    - POSTGRES_USER=postgres
+  links:
+    - postgresql
+  ports:
+    - "8000:8000"
+  volumes:
+    - .:/code
