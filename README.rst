@@ -7,10 +7,6 @@ Pgfulltext module of django orm extensions package (collection of third party pl
 - Now compatible with python2 and python3 with same code base.
 - Ready for django 1.3, 1.4, 1.5 and 1.6
 
-**NOTE**: In connection with my having moved on to other domains, djorm-ext-pgfulltext is in
-search of a new maintainer. If you're interested, please get in touch; direct email
-niwi@niwi.be is probably best.
-
 
 Introduction
 ------------
