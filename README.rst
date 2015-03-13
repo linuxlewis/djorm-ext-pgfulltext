@@ -95,6 +95,19 @@ You must ensure you have installed the extension `unaccent`:
 
 You can install this extension on template1 database for make this extension automatically available for all new created databases.
 
+Contributing
+------------
+
+The first step of contributing is being able to run the unit tests. We provide a seet of ``docker`` containers and a ``docker-compose`` file to help you achieve this task.
+
+Running the tests
+^^^^^^^^^^^^^^^^^
+
+The only command you need to run the tests is:
+
+.. code-block:: bash
+
+  docker-compose run --rm djorm python3 testing/runtests.py
 
 Changelog
 ---------
@@ -111,4 +124,3 @@ Changelog
 .. image:: https://d2weczhvl823v0.cloudfront.net/djangonauts/djorm-ext-pgfulltext/trend.png
    :alt: Bitdeli badge
    :target: https://bitdeli.com/free
-
