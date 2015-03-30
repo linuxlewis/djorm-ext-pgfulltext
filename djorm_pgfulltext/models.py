@@ -83,8 +83,11 @@ class SearchManagerMixIn(object):
     https://docs.djangoproject.com/en/1.4/howto/initial-data/#providing-initial-sql-data
     """
 
-    def __init__(self, fields=None, search_field='search_index',
-            config='pg_catalog.english', auto_update_search_field=False):
+    def __init__(self,
+                 fields=None,
+                 search_field='search_index',
+                 config='pg_catalog.english',
+                 auto_update_search_field=False):
         self.search_field = search_field
         self.default_weight = 'D'
         self.config = config
@@ -101,13 +104,14 @@ class SearchManagerMixIn(object):
             # Attach this manager as _fts_manager in the model class.
             if not getattr(cls, '_fts_manager', None):
                 cls._fts_manager = self
-    
+
             # Add 'update_search_field' instance method, that calls manager's update_search_field.
             if not getattr(cls, 'update_search_field', None):
                 def update_search_field(self, using=None, config=None):
                     self._fts_manager.update_search_field(pk=self.pk, using=using, config=config)
+
                 setattr(cls, 'update_search_field', update_search_field)
-    
+
             if self.auto_update_search_field:
                 models.signals.post_save.connect(auto_update_search_field_handler, sender=cls)
 
@@ -222,7 +226,7 @@ class SearchManagerMixIn(object):
         qn = connection.ops.quote_name
 
         return "setweight(to_tsvector('%s', coalesce(%s.%s, '')), '%s')" % \
-                    (config, qn(self.model._meta.db_table), qn(field.column), weight)
+               (config, qn(self.model._meta.db_table), qn(field.column), weight)
 
 
 class SearchQuerySet(QuerySet):
@@ -316,10 +320,9 @@ class SearchQuerySet(QuerySet):
                 )
 
             qs = qs.extra(select=select_dict, where=[where], order_by=order)
-        
+
         return qs
 
 
 class SearchManager(SearchManagerMixIn, models.Manager):
     pass
-

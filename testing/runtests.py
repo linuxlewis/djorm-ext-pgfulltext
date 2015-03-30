@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 
-import os, sys
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "settings")
+import os
+import sys
 
+import django
 from django.core.management import call_command
 
 
-import django
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "settings")
+
 if django.VERSION[:2] >= (1, 7):
     django.setup()
 
