@@ -1,10 +1,11 @@
-*.pyc
-.*swp
-doc/build
-dist
-versiontools*
-build*
 *.egg*
+*.pyc
+*.swp
 .idea
+.tox
+build*
+dist
+doc/build
 testing/venv/
 testing/venv16/
+versiontools*
