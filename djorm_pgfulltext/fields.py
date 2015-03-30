@@ -2,13 +2,14 @@
 
 # Python3 string compadability
 try:
-  basestring
+    basestring
 except NameError:
-  basestring = str
+    basestring = str
 
 import django
 from django.db import models
 from psycopg2.extensions import adapt
+
 
 class VectorField(models.Field):
 
@@ -28,12 +29,12 @@ class VectorField(models.Field):
     def db_type(self, *args, **kwargs):
         return 'tsvector'
 
-    #def get_prep_lookup(self, lookup_type, value):
-    #    if hasattr(value, 'prepare'):
-    #        return value.prepare()
-    #    if hasattr(value, '_prepare'):
-    #        return value._prepare()
-    #    raise TypeError("Field has invalid lookup: %s" % lookup_type)
+    # def get_prep_lookup(self, lookup_type, value):
+    #     if hasattr(value, 'prepare'):
+    #         return value.prepare()
+    #     if hasattr(value, '_prepare'):
+    #         return value._prepare()
+    #     raise TypeError("Field has invalid lookup: %s" % lookup_type)
 
     def get_db_prep_lookup(self, lookup_type, value, connection, prepared=False):
         return self.get_prep_lookup(lookup_type, value)
@@ -48,7 +49,7 @@ except ImportError:
     pass
 
 
-if django.VERSION[:2] >= (1,7):
+if django.VERSION[:2] >= (1, 7):
     # Create custom lookups for Django>= 1.7
 
     from django.db.models import Lookup
@@ -61,7 +62,6 @@ if django.VERSION[:2] >= (1,7):
 
     def negative(wordlist):
         return ['!' + x for x in startswith(wordlist)]
-
 
     class TSConfig(object):
         def __init__(self, name):
@@ -122,7 +122,6 @@ if django.VERSION[:2] >= (1,7):
 
         def transform(self, *args):
             return quotes(*args)
-
 
     class FullTextLookupStartsWith(FullTextLookupBase):
         """This lookup scans for full text index entries that BEGIN with
