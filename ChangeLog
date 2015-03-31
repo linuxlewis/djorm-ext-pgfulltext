@@ -5,10 +5,10 @@ CHANGES
 -----
 
 * Increase version number
-* Add a ChangeLog filex
+* Add a ChangeLog file
 * Add the AUTHORS file
 * Update .gitignore file
-* Fixing flake8 issues
+* Fix flake8 issues
 * Add tox.ini to the project
 * Update unit tests
 * Update requirements
