@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import psycopg2
 
 from itertools import repeat
 from django.db import models, connections
@@ -281,7 +282,7 @@ class SearchQuerySet(QuerySet):
             ts_query = "%s('%s', '%s')" % (
                 function,
                 config,
-                force_text(query).replace("'", "''")
+                psycopg2.extensions.adapt(force_text(query))
             )
 
             full_search_field = "%s.%s" % (
