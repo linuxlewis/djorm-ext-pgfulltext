@@ -78,11 +78,11 @@ if django.VERSION >= (1, 7):
                 rhs_params = [rhs_params]
 
             if type(rhs_params[0]) == TSConfig:
-                ts = rhs_params.pop(0)
+                ts = rhs_params[0]
                 ts_name = ts.name
                 cmd = '%s @@ to_tsquery(%%s::regconfig, %%s)' % lhs
 
-                rest = (ts_name, " & ".join(self.transform.__call__(rhs_params)))
+                rest = (ts_name, " & ".join(self.transform.__call__(rhs_params[1:])))
             else:
                 cmd = '%s @@ to_tsquery(%%s)' % lhs
                 rest = (" & ".join(self.transform.__call__(rhs_params)),)

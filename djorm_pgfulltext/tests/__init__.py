@@ -128,7 +128,7 @@ class TestFts(FtsSetUpMixin, TestCase):
 class TestFullTextLookups(FtsSetUpMixin, TestCase):
 
     def skipUnlessDjango17(self):
-        if django.VERSION[:2] < (1, 7):
+        if django.VERSION < (1, 7):
             self.skipTest("Requires Django>=1.7")
 
     def setUp(self):
@@ -147,7 +147,6 @@ class TestFullTextLookups(FtsSetUpMixin, TestCase):
                          "test       &&&& test", "\\'test"]:
             list(Person.objects.filter(search_index__ft_startswith=test_str))
 
-    @unittest.skip("Needs some love. Raises UnicodeEncodeError.")
     def test_user_input_utf8(self):
         for test_str in ["łódź"]:
             list(Person.objects.filter(search_index__ft_startswith=test_str))
@@ -155,8 +154,12 @@ class TestFullTextLookups(FtsSetUpMixin, TestCase):
     def test_alternative_config(self):
         from djorm_pgfulltext.fields import TSConfig
 
-        p = Person.objects.filter(
+        pq = Person.objects.filter(
             search_index__ft_startswith=[
-                TSConfig('names'), 'progra'])[0]
+                TSConfig('names'), 'progra'])
+        p = pq[0]
 
         self.assertEquals(p.pk, self.p1.pk)
+
+        # make sure it is preserved after re-query
+        self.assertEquals(pq.all()[0].pk, self.p1.pk)
