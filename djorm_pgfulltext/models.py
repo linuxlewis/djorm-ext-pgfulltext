@@ -5,6 +5,8 @@ from itertools import repeat
 from django.db import models, connections
 from django.db.models.query import QuerySet
 
+from djorm_pgfulltext.utils import adapt
+
 # Compatibility import and fixes section.
 
 try:
@@ -279,10 +281,10 @@ class SearchQuerySet(QuerySet):
 
         if query:
             function = "to_tsquery" if raw else "plainto_tsquery"
-            ts_query = "%s('%s', '%s')" % (
+            ts_query = "%s('%s', %s)" % (
                 function,
                 config,
-                psycopg2.extensions.adapt(force_text(query))
+                adapt(query)
             )
 
             full_search_field = "%s.%s" % (

@@ -8,7 +8,8 @@ except NameError:
 
 import django
 from django.db import models
-from psycopg2.extensions import adapt
+
+from djorm_pgfulltext.utils import adapt
 
 
 class VectorField(models.Field):
