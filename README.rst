@@ -107,7 +107,7 @@ The only command you need to run the tests is:
 
 .. code-block:: bash
 
-  docker-compose run --rm djorm python3 testing/runtests.py
+  docker-compose run --rm djorm python3 testing/runtests.py djorm_pgfulltext.tests
 
 Changelog
 ---------
