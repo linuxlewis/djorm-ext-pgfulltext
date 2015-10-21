@@ -6,10 +6,10 @@ from django.db import transaction
 from django.utils import unittest
 from django.utils.unittest import TestCase
 
-from .models import Book
-from .models import Person
-from .models import Person2
-from .models import Person3
+from djorm_pgfulltext.tests.models import Book
+from djorm_pgfulltext.tests.models import Person
+from djorm_pgfulltext.tests.models import Person2
+from djorm_pgfulltext.tests.models import Person3
 
 
 class FtsSetUpMixin:
@@ -35,6 +35,8 @@ class TestFts(FtsSetUpMixin, TestCase):
         obj.update_search_field(using='default')
 
         qs = Person2.objects.search(query="Pepa")
+        self.assertEqual(qs.count(), 1)
+        qs = Person2.objects.search(query=u"Pèpâ")
         self.assertEqual(qs.count(), 1)
 
     def test_self_automatic_update_index(self):
@@ -78,10 +80,10 @@ class TestFts(FtsSetUpMixin, TestCase):
         self.assertEqual(qs2.count(), 1)
 
     def test_search_or(self):
-        qs1 = Person.objects.search(query="Andrei | Pepa", raw=True)
-        qs2 = Person.objects.search(query="Andrei | Pepo", raw=True)
-        qs3 = Person.objects.search(query="Pèpâ | Andrei", raw=True)
-        qs4 = Person.objects.search(query="Pepo | Francisco", raw=True)
+        qs1 = Person.objects.search(query=u"Andrei | Pepa", raw=True)
+        qs2 = Person.objects.search(query=u"Andrei | Pepo", raw=True)
+        qs3 = Person.objects.search(query=u"Pèpâ | Andrei", raw=True)
+        qs4 = Person.objects.search(query=u"Pepo | Francisco", raw=True)
 
         self.assertEqual(qs1.count(), 2)
         self.assertEqual(qs2.count(), 1)
