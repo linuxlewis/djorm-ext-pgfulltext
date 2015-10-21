@@ -14,7 +14,7 @@ DATABASES = {
         'NAME': 'test',
         'USER': os.environ.get('POSTGRES_USER', 'postgres'),
         'PASSWORD': '',
-        'HOST': os.environ.get('POSTGRES_HOST', 'localhost'),
+        'HOST': 'postgresql',
         'PORT': '',
     }
 }

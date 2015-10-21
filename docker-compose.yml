@@ -6,7 +6,6 @@ postgresql:
 djorm:
   build: .
   environment:
-    - POSTGRES_HOST=192.168.59.103
     - POSTGRES_USER=postgres
   links:
     - postgresql
