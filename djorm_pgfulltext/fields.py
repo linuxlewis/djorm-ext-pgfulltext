@@ -50,7 +50,7 @@ except ImportError:
     pass
 
 
-if django.VERSION[:2] >= (1, 7):
+if django.VERSION >= (1, 7):
     # Create custom lookups for Django>= 1.7
 
     from django.db.models import Lookup

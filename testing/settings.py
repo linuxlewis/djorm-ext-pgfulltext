@@ -30,4 +30,8 @@ INSTALLED_APPS = (
     'djorm_pgfulltext.tests',
 )
 
-TEST_RUNNER = 'django.test.simple.DjangoTestSuiteRunner'
+import django
+if django.VERSION >= (1,6):
+    TEST_RUNNER = 'django.test.runner.DiscoverRunner'
+else:
+    TEST_RUNNER = 'django.test.simple.DjangoTestSuiteRunner'
