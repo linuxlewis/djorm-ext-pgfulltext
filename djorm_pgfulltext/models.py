@@ -81,6 +81,10 @@ class SearchManagerMixIn(object):
 
     http://www.postgresql.org/docs/9.1/interactive/textsearch-configuration.html
 
+    Note that 'config' can be a tuple as in ('pg_catalog.english', 'pg_catalog.simple').
+    In this case, fields are tokenized using each of the tokenizers specified in 'config'
+    and the result is contatenated. This allows you to create tsvector with multiple configs.
+
     To do all those actions in database, create a setup sql script for Django:
 
     https://docs.djangoproject.com/en/1.4/howto/initial-data/#providing-initial-sql-data
@@ -202,15 +206,19 @@ class SearchManagerMixIn(object):
 
         return parsed_fields
 
-    def _get_search_vector(self, config, using, fields=None):
+    def _get_search_vector(self, configs, using, fields=None):
         if fields is None:
             vector_fields = self._parse_fields(self._fields)
         else:
             vector_fields = self._parse_fields(fields)
 
+        if isinstance(configs, basestring):
+            configs = [configs]
+
         search_vector = []
-        for field_name, weight in vector_fields:
-            search_vector.append(self._get_vector_for_field(field_name, weight, config, using))
+        for config in configs:
+            for field_name, weight in vector_fields:
+                search_vector.append(self._get_vector_for_field(field_name, weight, config, using))
         return ' || '.join(search_vector)
 
     def _get_vector_for_field(self, field_name, weight=None, config=None, using=None):
