@@ -6,10 +6,10 @@ from django.db import transaction
 from django.utils import unittest
 from django.utils.unittest import TestCase
 
-from .models import Book
-from .models import Person
-from .models import Person2
-from .models import Person3
+from djorm_pgfulltext.tests.models import Book
+from djorm_pgfulltext.tests.models import Person
+from djorm_pgfulltext.tests.models import Person2
+from djorm_pgfulltext.tests.models import Person3
 
 
 class FtsSetUpMixin:
@@ -35,6 +35,8 @@ class TestFts(FtsSetUpMixin, TestCase):
         obj.update_search_field(using='default')
 
         qs = Person2.objects.search(query="Pepa")
+        self.assertEqual(qs.count(), 1)
+        qs = Person2.objects.search(query=u"Pèpâ")
         self.assertEqual(qs.count(), 1)
 
     def test_self_automatic_update_index(self):
@@ -78,10 +80,10 @@ class TestFts(FtsSetUpMixin, TestCase):
         self.assertEqual(qs2.count(), 1)
 
     def test_search_or(self):
-        qs1 = Person.objects.search(query="Andrei | Pepa", raw=True)
-        qs2 = Person.objects.search(query="Andrei | Pepo", raw=True)
-        qs3 = Person.objects.search(query="Pèpâ | Andrei", raw=True)
-        qs4 = Person.objects.search(query="Pepo | Francisco", raw=True)
+        qs1 = Person.objects.search(query=u"Andrei | Pepa", raw=True)
+        qs2 = Person.objects.search(query=u"Andrei | Pepo", raw=True)
+        qs3 = Person.objects.search(query=u"Pèpâ | Andrei", raw=True)
+        qs4 = Person.objects.search(query=u"Pepo | Francisco", raw=True)
 
         self.assertEqual(qs1.count(), 2)
         self.assertEqual(qs2.count(), 1)
@@ -128,7 +130,7 @@ class TestFts(FtsSetUpMixin, TestCase):
 class TestFullTextLookups(FtsSetUpMixin, TestCase):
 
     def skipUnlessDjango17(self):
-        if django.VERSION[:2] < (1, 7):
+        if django.VERSION < (1, 7):
             self.skipTest("Requires Django>=1.7")
 
     def setUp(self):
@@ -147,7 +149,6 @@ class TestFullTextLookups(FtsSetUpMixin, TestCase):
                          "test       &&&& test", "\\'test"]:
             list(Person.objects.filter(search_index__ft_startswith=test_str))
 
-    @unittest.skip("Needs some love. Raises UnicodeEncodeError.")
     def test_user_input_utf8(self):
         for test_str in ["łódź"]:
             list(Person.objects.filter(search_index__ft_startswith=test_str))
@@ -155,8 +156,12 @@ class TestFullTextLookups(FtsSetUpMixin, TestCase):
     def test_alternative_config(self):
         from djorm_pgfulltext.fields import TSConfig
 
-        p = Person.objects.filter(
+        pq = Person.objects.filter(
             search_index__ft_startswith=[
-                TSConfig('names'), 'progra'])[0]
+                TSConfig('names'), 'progra'])
+        p = pq[0]
 
         self.assertEquals(p.pk, self.p1.pk)
+
+        # make sure it is preserved after re-query
+        self.assertEquals(pq.all()[0].pk, self.p1.pk)

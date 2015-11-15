@@ -57,8 +57,10 @@ the index field  is updated automatically by calling the ``save`` method.
 Usage examples:
 ^^^^^^^^^^^^^^^
 
-- The config parameter is optional and defaults to 'pg_catalog.english'.
-- The fields parameter is optional. If a list of tuples, you can specify the ranking of each field, if it is None, it gets 'D' as the default.
+- The ``config`` parameter is optional and defaults to ``'pg_catalog.english'``.
+- The ``config`` parameter can be a tuple as in ``('pg_catalog.english', 'pg_catalog.simple')``. In this case, all of the configs
+  are used and the tokenized vectors are joined together.
+- The ``fields`` parameter is optional. If a list of tuples, you can specify the ranking of each field, if it is ``None``, it gets ``'D'`` as the default.
 - It can also be a simple list of fields, and the ranking will be selected by default. If the field is empty, the index was applied to all fields ``CharField`` and ``TextField``.
 
 To search, use the ``search`` method of the manager. The current implementation, by default uses unaccent extension for ignore the accents. Also, the searches are case insensitive.
@@ -107,7 +109,7 @@ The only command you need to run the tests is:
 
 .. code-block:: bash
 
-  docker-compose run --rm djorm python3 testing/runtests.py
+  docker-compose run --rm djorm python3 testing/runtests.py djorm_pgfulltext.tests
 
 Changelog
 ---------

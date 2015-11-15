@@ -14,7 +14,7 @@ DATABASES = {
         'NAME': 'test',
         'USER': os.environ.get('POSTGRES_USER', 'postgres'),
         'PASSWORD': '',
-        'HOST': os.environ.get('POSTGRES_HOST', 'localhost'),
+        'HOST': 'postgresql',
         'PORT': '',
     }
 }
@@ -30,4 +30,8 @@ INSTALLED_APPS = (
     'djorm_pgfulltext.tests',
 )
 
-TEST_RUNNER = 'django.test.simple.DjangoTestSuiteRunner'
+import django
+if django.VERSION >= (1,6):
+    TEST_RUNNER = 'django.test.runner.DiscoverRunner'
+else:
+    TEST_RUNNER = 'django.test.simple.DjangoTestSuiteRunner'
