@@ -110,8 +110,10 @@ class SearchManagerMixIn(object):
 
             # Add 'update_search_field' instance method, that calls manager's update_search_field.
             if not getattr(cls, 'update_search_field', None):
-                def update_search_field(self, using=None, config=None):
-                    self._fts_manager.update_search_field(pk=self.pk, using=using, config=config)
+                def update_search_field(self, search_field=None, fields=None, using=None, config=None, extra=None):
+                    self._fts_manager.update_search_field(
+                        pk=self.pk, search_field=search_field, fields=fields, using=using, config=config, extra=extra
+                    )
 
                 setattr(cls, 'update_search_field', update_search_field)
 
@@ -126,16 +128,26 @@ class SearchManagerMixIn(object):
     def search(self, *args, **kwargs):
         return self.get_queryset().search(*args, **kwargs)
 
-    def update_search_field(self, pk=None, config=None, using=None):
-        '''
+    def update_search_field(self, pk=None, search_field=None, fields=None, config=None, using=None, extra=None):
+        """
         Update the search_field of one instance, or a list of instances, or
         all instances in the table (pk is one key, a list of keys or none).
 
         If there is no search_field, this function does nothing.
-        '''
+        :param pk: Primary key of instance
+        :param search_field: search_field which will be updated
+        :param fields: fields from which we update the search_field
+        :param config: config of full text search
+        :param using: DB we are using
+        """
+        if not search_field:
+            search_field = self.search_field
 
-        if not self.search_field:
+        if not search_field:
             return
+
+        if fields is None:
+            fields = self._fields
 
         if not config:
             config = self.config
@@ -159,10 +171,10 @@ class SearchManagerMixIn(object):
                 ','.join(repeat("%s", len(params)))
             )
 
-        search_vector = self._get_search_vector(config, using)
+        search_vector = self._get_search_vector(config, using, fields=fields, extra=extra)
         sql = "UPDATE %s SET %s = %s %s;" % (
             qn(self.model._meta.db_table),
-            qn(self.search_field),
+            qn(search_field),
             search_vector,
             where_sql
         )
@@ -202,7 +214,7 @@ class SearchManagerMixIn(object):
 
         return parsed_fields
 
-    def _get_search_vector(self, configs, using, fields=None):
+    def _get_search_vector(self, configs, using, fields=None, extra=None):
         if fields is None:
             vector_fields = self._parse_fields(self._fields)
         else:
@@ -214,10 +226,12 @@ class SearchManagerMixIn(object):
         search_vector = []
         for config in configs:
             for field_name, weight in vector_fields:
-                search_vector.append(self._get_vector_for_field(field_name, weight, config, using))
+                search_vector.append(
+                    self._get_vector_for_field(field_name, weight=weight, config=config, using=using, extra=extra)
+                )
         return ' || '.join(search_vector)
 
-    def _get_vector_for_field(self, field_name, weight=None, config=None, using=None):
+    def _get_vector_for_field(self, field_name, weight=None, config=None, using=None, extra=None):
         if not weight:
             weight = self.default_weight
 
@@ -229,11 +243,23 @@ class SearchManagerMixIn(object):
 
         field = self.model._meta.get_field(field_name)
 
+        ret = None
+
+        if hasattr(self.model, '_convert_field_to_db'):
+            ret = self.model._convert_field_to_db(field, weight, config, using, extra=extra)
+
+        if ret is None:
+            ret = self._convert_field_to_db(field, weight, config, using, extra=extra)
+
+        return ret
+
+    @staticmethod
+    def _convert_field_to_db(field, weight, config, using, extra=None):
         connection = connections[using]
         qn = connection.ops.quote_name
 
         return "setweight(to_tsvector('%s', coalesce(%s.%s, '')), '%s')" % \
-               (config, qn(self.model._meta.db_table), qn(field.column), weight)
+               (config, qn(field.model._meta.db_table), qn(field.column), weight)
 
 
 class SearchQuerySet(QuerySet):
