@@ -31,7 +31,7 @@ INSTALLED_APPS = (
 )
 
 import django
-if django.VERSION >= (1,6):
+if django.VERSION >= (1, 6):
     TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 else:
     TEST_RUNNER = 'django.test.simple.DjangoTestSuiteRunner'

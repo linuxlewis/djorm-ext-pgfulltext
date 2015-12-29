@@ -1,18 +1,14 @@
 # -*- coding: utf-8 -*-
-import psycopg2
-
 from itertools import repeat
+import six
+
 from django.db import models, connections
 from django.db.models.query import QuerySet
+from django.utils.encoding import smart_text
 
 from djorm_pgfulltext.utils import adapt
 
 # Compatibility import and fixes section.
-
-try:
-    from django.utils.encoding import force_unicode as force_text
-except ImportError:
-    from django.utils.encoding import force_text
 
 try:
     from django.db.transaction import atomic
@@ -212,7 +208,7 @@ class SearchManagerMixIn(object):
         else:
             vector_fields = self._parse_fields(fields)
 
-        if isinstance(configs, basestring):
+        if isinstance(configs, six.string_types[0]):
             configs = [configs]
 
         search_vector = []
@@ -289,10 +285,8 @@ class SearchQuerySet(QuerySet):
 
         if query:
             function = "to_tsquery" if raw else "plainto_tsquery"
-            ts_query = "%s('%s', %s)" % (
-                function,
-                config,
-                adapt(query)
+            ts_query = smart_text(
+                "%s('%s', %s)" % (function, config, adapt(query))
             )
 
             full_search_field = "%s.%s" % (
