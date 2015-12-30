@@ -4,9 +4,11 @@ install: "pip install tox"
 # command to run tests
 script: tox -r
 env:
-    - TOXENV=flake8-py27
-    - TOXENV=flake8-py34
-    - TOXENV=py27
-    - TOXENV=py34
+    - TOX_TESTENV_PASSENV=POSTGRES_HOST POSTGRES_HOST=localhost TOXENV=flake8-py27
+    - TOX_TESTENV_PASSENV=POSTGRES_HOST POSTGRES_HOST=localhost TOXENV=flake8-py34
+    - TOX_TESTENV_PASSENV=POSTGRES_HOST POSTGRES_HOST=localhost TOXENV=py27
+    - TOX_TESTENV_PASSENV=POSTGRES_HOST POSTGRES_HOST=localhost TOXENV=py34
 addons:
     postgresql: "9.4"
+services:
+    - postgresql
