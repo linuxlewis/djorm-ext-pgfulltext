@@ -1,0 +1,12 @@
+language: python
+# command to install dependencies
+install: "pip install tox"
+# command to run tests
+script: tox -r
+env:
+    - TOXENV=flake8-py27
+    - TOXENV=flake8-py34
+    - TOXENV=py27
+    - TOXENV=py34
+addons:
+    postgresql: "9.4"
