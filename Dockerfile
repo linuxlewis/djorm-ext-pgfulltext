@@ -14,6 +14,14 @@ RUN apt-get update \
 
   # Install libgeos.
   && DEBIAN_FRONTEND=noninteractive apt-get install -y \
+  
+    git \
+
+  # Install Python2.x.
+    python \
+    python-dev \
+    python-pip \
+
   # Install Python3.
     python3 \
     python3-dev \
@@ -31,4 +39,5 @@ COPY requirements.txt /code/requirements.txt
 COPY test-requirements.txt /code/test-requirements.txt
 
 # Install the pip packages.
+RUN pip install -q -r requirements.txt -r test-requirements.txt
 RUN pip3 install -q -r requirements.txt -r test-requirements.txt
