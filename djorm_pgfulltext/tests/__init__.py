@@ -10,6 +10,7 @@ from djorm_pgfulltext.tests.models import Book
 from djorm_pgfulltext.tests.models import Person
 from djorm_pgfulltext.tests.models import Person2
 from djorm_pgfulltext.tests.models import Person3
+from djorm_pgfulltext.tests.models import Person4
 
 
 class FtsSetUpMixin:
@@ -125,6 +126,22 @@ class TestFts(FtsSetUpMixin, TestCase):
         qs = Book.objects.search(query='Python', headline_field='headline', headline_document='name')
 
         self.assertEqual(qs[0].headline, 'Learning <b>Python</b>')
+
+    def test_multi_vector_field(self):
+        Person4.objects.create(
+            name=u'Pepa',
+            description=u"Is a housewife",
+            data=u'{"%s": "indexed", "not_indexed": "trash"}' % Person4.INDEXED_KEY
+        )
+
+        qs = Person4.objects.filter(search_index__ft_startswith='housewife')
+        self.assertEqual(qs.count(), 1)
+
+        qs = Person4.objects.filter(data_search_index__ft_startswith="indexed")
+        self.assertEqual(qs.count(), 1)
+
+        qs = Person4.objects.filter(data_search_index__ft_startswith="trash")
+        self.assertEqual(qs.count(), 0)
 
 
 class TestFullTextLookups(FtsSetUpMixin, TestCase):
