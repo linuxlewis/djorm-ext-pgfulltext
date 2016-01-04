@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import django
-from django.db import connection
 from django.db import transaction
-from django.utils import unittest
 from django.utils.unittest import TestCase
 
 from djorm_pgfulltext.tests.models import Book
@@ -11,6 +9,7 @@ from djorm_pgfulltext.tests.models import Person
 from djorm_pgfulltext.tests.models import Person2
 from djorm_pgfulltext.tests.models import Person3
 from djorm_pgfulltext.tests.models import Person4
+from djorm_pgfulltext.tests.models import Person5
 
 
 class FtsSetUpMixin:
@@ -142,6 +141,14 @@ class TestFts(FtsSetUpMixin, TestCase):
 
         qs = Person4.objects.filter(data_search_index__ft_startswith="trash")
         self.assertEqual(qs.count(), 0)
+
+    def test_empty_search_index(self):
+        Person5.objects.create(
+            name='Pepa',
+            description='Is a housewife'
+        )
+
+        self.assertEqual(Person5.objects.all().count(), 1)
 
 
 class TestFullTextLookups(FtsSetUpMixin, TestCase):

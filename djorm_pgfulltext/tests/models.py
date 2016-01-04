@@ -6,6 +6,7 @@ from django.db import models, connections
 from ..fields import VectorField
 from ..models import SearchManager
 
+
 class Person(models.Model):
     name = models.CharField(max_length=32)
     description = models.TextField()
@@ -99,6 +100,22 @@ class Person4(models.Model):
         return """setweight(
             to_tsvector('%s', coalesce(to_json(%s.%s::json) ->> '%s', '')), '%s')
         """ % (config, qn(field.model._meta.db_table), qn(field.column), extra['key'], weight)
+
+
+class Person5(models.Model):
+    name = models.CharField(max_length=32)
+    description = models.TextField()
+    search_index = VectorField()
+
+    objects = SearchManager(
+        fields=tuple(),
+        search_field = 'search_index',
+        config = 'names',
+        auto_update_search_field=True,
+    )
+
+    def __unicode__(self):
+        return self.name
 
 
 class Book(models.Model):
