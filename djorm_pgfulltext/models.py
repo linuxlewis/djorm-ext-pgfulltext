@@ -175,7 +175,7 @@ class SearchManagerMixIn(object):
         sql = "UPDATE %s SET %s = %s %s;" % (
             qn(self.model._meta.db_table),
             qn(search_field),
-            search_vector,
+            search_vector or "''",
             where_sql
         )
 
